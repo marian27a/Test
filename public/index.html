@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <link rel="stylesheet" href="src/css/bootstrap.min.css">
+    <link rel="stylesheet" href="src/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="src/css/font-awesome.min.css">
+    <link rel="icon" href="favicon.ico">
+    
+    <style>
+        body{
+            background-color: #e3f2fd;
+        }
+        h4{
+            margin: 5px;
+        }
+        .must{
+            color: red;
+        }
+        .help-block{
+            font-size: 8px;
+        }
+    </style>
+</head>
+<body ng-app="mainApp">
+    <div class="container" ng-controller="mainCtrl as ctrl">
+        <div class="row">
+            <div class="col-sm-12">
+              <h4 style="margin">Працівники</h4><br>
+            </div>
+            <br>
+            <div class="col-sm-12">
+                <form action="">
+                   <div class="form-group">
+                       <input type="text" class="form-control"  ng-model="searchValue">
+                   </div>
+                   <button type="button" id ="myInput" class="btn btn-info btn-sm" data-toggle="modal" data-target="#myModal">
+                      Додати нового працівника
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-sm-12">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <td>No</td>
+                            <td>Прізвище</td>
+                            <td>Ім'я</td>
+                            <td>Дата додавання</td>
+                            <td>Час приходу</td>
+                            <td>Час відходу</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="worker in workers| serchMatches: searchValue">
+                            <td>{{$index+1}}</td>
+                            <td>{{worker.firstName}}</td>
+                            <td>{{worker.secondName}}</td>
+                            <td>{{worker.createdAt| date:'M/d/yy'}}</td>
+                            <td>{{worker.comeTime}}</td>
+                            <td>{{worker.goTime}}</td>
+                            <td> <button type="button" id ="myInput2" class="btn btn-success btn-xs" data-toggle="modal" data-target="#myModal2" ng-click="ctrl.changeWorker($index, worker)">
+                              Change
+                                 </button>
+                                 <button type="button" class="btn btn-xs" ng-click="ctrl.deleteWorker($index, worker)">
+                                  Dellate
+                                 </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Modal new worker       -->
+        <div class="modal fade" id = "myModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Додати нового працівника</h4>
+        
+                  </div>
+                  <div class="modal-body">
+                      <form name = "addForm" id="addForm" novalidate>
+                          <div class="form-group" ng-class="{ 'has-error' : addForm.firstName.$error.required && !addForm.firstName.$pristine }">
+                              <div class="row">
+                                  <label for="firstName" class="col-sm-2 control-label">Iм'я:<span class="must">*</span></label>
+                                  <div class="col-sm-2">
+                                       <span class="help-block" ng-if="addForm.firstName.$error.required && !addForm.firstName.$pristine">обов'язкове поле</span> 
+                                  </div>
+                                  <div class="col-sm-8">
+                                      <input type="text" class="form-control" id="firstName" name="firstName" placeholder="Введіть ім'я" ng-model="ctrl.newWorker.firstName" required>
+                                  </div>
+                              </div>
+                         </div>
+                         <div class="form-group" ng-class="{ 'has-error' : addForm.secondName.$error.required && !addForm.secondName.$pristine }">
+                             <div class="row">
+                                 <label for="secondName" class="col-sm-2 control-label">Прізвище:<span class="must">*</span></label>
+                                 <div class="col-sm-2">
+                                     <span class="help-block" ng-if="addForm.secondName.$error.required && !addForm.secondName.$pristine">обов'язкове поле</span> 
+                                 </div>
+                                 <div class="col-sm-8">
+                                     <input type="text" class="form-control" id = "secondName" name="secondName" placeholder="Введіть прізвище" ng-model="ctrl.newWorker.secondName" required>
+                                 </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <label for="fatherName" class="col-sm-4 control-label">Побатькові:</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id = "fatherName" placeholder="" placeholder="Введіть " ng-model="ctrl.newWorker.fatherName">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <label for="comeTiem" class="col-sm-4 control-label">Час приходу:</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" id = "comeTime" ng-model="ctrl.newWorker.comeTime">
+                                    </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <label for="goTiem" class="col-sm-4 control-label">Час відходу:</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id = "goTime" ng-model="ctrl.newWorker.goTime">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <label for="male" class="col-sm-4 control-label">male</label>
+                                <div class="col-sm-8">
+                                    <label class="radio-inline">
+                                    <input type="radio" name="inlineRadioOptions" id="inlineRadio1" ng-selected="ctrl.newWorker.sex = 'Male'" checked="checked"> Male
+                                    </label>
+                                    <label class="radio-inline">
+                                    <input type="radio" name="inlineRadioOptions" id="inlineRadio2" ng-selected="ctrl.newWorker.sex = 'female'"> Female
+                                    </label>                    
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" id="closeMod1"  data-dismiss="modal">Скасувати</button>
+                    <button type="button" class="btn btn-primary" id="addWorker"  data-dismiss="modal" ng-click = "ctrl.addWorker(ctrl.newWorker)" ng-disabled = "addForm.$invalid">Додати працівника</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+     
+     
+    <!-- Modal change worker    -->
+    <div class="modal fade" id = "myModal2" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Змінити дані</h4>
+                </div>
+                <div class="modal-body">
+                    <form name = "">
+                        <div class="form-group">
+                            <label for="FirstName">Ім'я</label>
+                            <input type="text" class="form-control" id = "FirstName" placeholder="" ng-model="ctrl.currentWorker.firstName">
+                        </div>
+                        <div class="form-group">
+                            <label for="secondName">Прізвище</label>
+                            <input type="text" class="form-control" id = "secondName" placeholder="" ng-model="ctrl.currentWorker.secondName">
+                        </div>
+                        <div class="form-group">
+                            <label for="comeTime">Час приходу</label>
+                            <input type="text" class="form-control" id = "comeTime" placeholder="" ng-model="ctrl.currentWorker.comeTime">
+                        </div>
+                        <div class="form-group">
+                            <label for="goTime">Час відходу</label>
+                            <input type="text" class="form-control" id = "goTime" placeholder="" ng-model="ctrl.currentWorker.goTime">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn"  data-dismiss="modal">Chansel</button>
+                    <button type="button" class="btn btn-primary"  data-dismiss="modal" ng-click = "ctrl.SaveChanges()">Save changes</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal --> 
+
+
+</div>
+   
+   
+    
+    <script src="src/libs/angular/angular.min.js"></script>
+    <script src="app/app.js"></script>
+    <script src="app/services.js"></script>
+    <script src="app/controllers.js"></script>
+
+   
+    <script src="src/libs/jquery/jquery-3.1.1.min.js"></script>
+    <script src="src/js/bootstrap.min.js"></script>
+    <script>
+        $('#myModal').on('shown.bs.modal', function () {
+            $('#myInput').focus()
+        })
+    </script>
+    <script>
+        $('#myModal2').on('shown.bs.modal', function () {
+            $('#myInput2').focus()
+        })
+    </script>
+</body>
+</html>
